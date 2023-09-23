@@ -1,7 +1,8 @@
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
-var morgan = require('morgan')
+const morgan = require('morgan')
+const cors = require('cors')
 
 
 let persons = [
@@ -32,6 +33,7 @@ morgan.token('req-body', (req) => JSON.stringify(req.body));
 app.use(
   morgan(':method :url :status :res[content-length] - :response-time ms :req-body')
 );
+app.use(cors())
 
 app.get('/info', (req, res) => {
     res.send(`<p>Phonebook has info for ${persons.length}</p><p>${new Date()}</p>`)
@@ -73,6 +75,26 @@ app.post('/api/persons', (req, res) => {
     }
 
     persons.push(person)
+    res.json(person)
+})
+
+app.put('/api/persons/:id', (req, res) => {
+    const body = req.body
+    const id = req.params.id
+    if (!body.name || !body.number) {
+        return res.status(400).json({
+            error: 'content missing'
+        })
+    }
+    const person = {
+        name: body.name.trim(),
+        number: body.number,
+        id
+    }
+
+    const index = persons.findIndex(person => person.id === Number(id))
+    if (index < 0) return res.status(404).end()
+    persons.splice(index, 1, person)
     res.json(person)
 })
 
