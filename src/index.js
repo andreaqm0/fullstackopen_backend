@@ -34,6 +34,7 @@ app.use(
   morgan(':method :url :status :res[content-length] - :response-time ms :req-body')
 );
 app.use(cors())
+app.use(express.static('dist'))
 
 app.get('/info', (req, res) => {
     res.send(`<p>Phonebook has info for ${persons.length}</p><p>${new Date()}</p>`)
