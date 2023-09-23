@@ -56,10 +56,15 @@ app.post('/api/persons', (req, res) => {
             error: 'content missing'
         })
     }
+    if (persons.some(person => person.name === body.name.trim())) {
+        return res.status(400).json({
+            error: 'name must be unique'
+        })
+    }
     const person = {
-        name: body.name,
+        name: body.name.trim(),
         number: body.number,
-        id: Math.floor((Math.random() * 10000) + 1001),
+        id: Math.floor((Math.random() * 9000) + 1001),
     }
 
     persons.push(person)
